@@ -12,4 +12,18 @@
     <string name="check_box_text">چیک باکس</string>
     <string name="switch_text">یہ کیا کرتا ہے؟</string>
     <string name="image_button_description">کیمرہ</string>
+
+    <string name="switch_on">سوئچ آن ہے</string>
+    <string name="switch_off">سوئچ آف ہے</string>
+    <string name="finish_activity_question">کیا آپ اس سرگرمی کو ختم کرنا چاہتے ہیں؟</string>
+    <string name="yes">ہاں</string>
+    <string name="no">نہیں</string>
+    <string name="camera_unavailable">کیمرہ ایپ دستیاب نہیں ہے</string>
+    <string name="photo_load_error">تصویر لوڈ نہیں ہو سکی</string>
+    <string name="no_photo_returned">کیمرے سے کوئی تصویر موصول نہیں ہوئی</string>
+    <string name="activity_response">یہ میرا جواب ہے</string>
+    <string name="activity_result_message">ListItemsActivity سے موصول ہوا: %1$s</string>
+    <string name="invalid_email">درست ای میل ایڈریس درج کریں</string>
+    <string name="empty_password">پاس ورڈ خالی نہیں ہو سکتا</string>
+
 </resources>

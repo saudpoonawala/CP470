@@ -11,4 +11,18 @@
     <string name="check_box_text">Check Box</string>
     <string name="switch_text">What does this do?</string>
     <string name="image_button_description">Camera</string>
+
+
+    <string name="switch_on">Switch is On</string>
+    <string name="switch_off">Switch is Off</string>
+    <string name="finish_activity_question">Do you want to finish this activity?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="camera_unavailable">No camera app available</string>
+    <string name="photo_load_error">Photo could not be loaded</string>
+    <string name="no_photo_returned">No photo returned by camera</string>
+    <string name="activity_response">Here is my response</string>
+    <string name="activity_result_message">ListItemsActivity passed: %1$s</string>
+    <string name="invalid_email">Enter a valid email address</string>
+    <string name="empty_password">Password cannot be empty</string>
 </resources>
