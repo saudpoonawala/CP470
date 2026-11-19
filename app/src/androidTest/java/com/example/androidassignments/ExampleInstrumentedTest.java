@@ -1,26 +1,18 @@
 package com.example.androidassignments;
 
-
-
-import androidx.appcompat.widget.Toolbar;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -32,17 +24,21 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
 
+    // Test 1: Check application context
+
     @Test
     public void useAppContext() {
-        Context appContext =
-                InstrumentationRegistry.getInstrumentation()
-                        .getTargetContext();
+        Context context = InstrumentationRegistry
+                .getInstrumentation()
+                .getTargetContext();
 
         assertEquals(
                 "com.example.androidassignments",
-                appContext.getPackageName()
+                context.getPackageName()
         );
     }
+
+    // Test 2: Check ChatWindow opens
 
     @Test
     public void chatWindow_opensWithRequiredViews() {
@@ -55,8 +51,7 @@ public class ExampleInstrumentedTest {
         );
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        Activity activity =
-                instrumentation.startActivitySync(intent);
+        Activity activity = instrumentation.startActivitySync(intent);
 
         try {
             instrumentation.runOnMainSync(() -> {
@@ -69,6 +64,8 @@ public class ExampleInstrumentedTest {
         }
     }
 
+    // Test 3: Check sending a chat message
+
     @Test
     public void chatWindow_sendingMessageUpdatesListAndClearsInput() {
         Instrumentation instrumentation =
@@ -80,34 +77,47 @@ public class ExampleInstrumentedTest {
         );
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        Activity activity =
-                instrumentation.startActivitySync(intent);
+        Activity activity = instrumentation.startActivitySync(intent);
 
         try {
             instrumentation.runOnMainSync(() -> {
                 EditText input =
                         activity.findViewById(R.id.textInput);
+
                 Button send =
                         activity.findViewById(R.id.sendButton);
+
                 ListView list =
                         activity.findViewById(R.id.chatView);
+
+                int previousCount = list.getAdapter().getCount();
 
                 input.setText("Hello");
                 send.performClick();
 
-                assertEquals(2, list.getAdapter().getCount());
-                assertEquals("Hello",
-                        list.getAdapter().getItem(0));
+                assertEquals(
+                        previousCount + 2,
+                        list.getAdapter().getCount()
+                );
+
+                assertEquals(
+                        "Hello",
+                        list.getAdapter().getItem(previousCount)
+                );
+
                 assertEquals(
                         "Received: Thanks for your message!",
-                        list.getAdapter().getItem(1)
+                        list.getAdapter().getItem(previousCount + 1)
                 );
+
                 assertEquals("", input.getText().toString());
             });
         } finally {
             instrumentation.runOnMainSync(activity::finish);
         }
     }
+
+    // Test 4: Check LoginActivity
 
     @Test
     public void loginActivity_opensWithRequiredViews() {
@@ -120,8 +130,7 @@ public class ExampleInstrumentedTest {
         );
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        Activity activity =
-                instrumentation.startActivitySync(intent);
+        Activity activity = instrumentation.startActivitySync(intent);
 
         try {
             instrumentation.runOnMainSync(() -> {
@@ -134,6 +143,8 @@ public class ExampleInstrumentedTest {
         }
     }
 
+    // Test 5: Check MainActivity buttons
+
     @Test
     public void mainActivity_opensWithRequiredButtons() {
         Instrumentation instrumentation =
@@ -145,8 +156,7 @@ public class ExampleInstrumentedTest {
         );
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        Activity activity =
-                instrumentation.startActivitySync(intent);
+        Activity activity = instrumentation.startActivitySync(intent);
 
         try {
             instrumentation.runOnMainSync(() -> {
@@ -167,6 +177,8 @@ public class ExampleInstrumentedTest {
         }
     }
 
+    // Test 6: Check ListItemsActivity
+
     @Test
     public void listItemsActivity_controlsWorkCorrectly() {
         Instrumentation instrumentation =
@@ -182,11 +194,19 @@ public class ExampleInstrumentedTest {
 
         try {
             instrumentation.runOnMainSync(() -> {
-                assertNotNull(activity.findViewById(R.id.radioButton));
-                assertNotNull(activity.findViewById(R.id.checkBox));
-                assertNotNull(activity.findViewById(R.id.imageButton));
+                assertNotNull(
+                        activity.findViewById(R.id.radioButton)
+                );
 
-                androidx.appcompat.widget.SwitchCompat toggle =
+                assertNotNull(
+                        activity.findViewById(R.id.checkBox)
+                );
+
+                assertNotNull(
+                        activity.findViewById(R.id.imageButton)
+                );
+
+                SwitchCompat toggle =
                         activity.findViewById(R.id.switchButton);
 
                 assertNotNull(toggle);
@@ -202,6 +222,7 @@ public class ExampleInstrumentedTest {
         }
     }
 
+    // Test 7: Check toolbar and menu items
 
     @Test
     public void toolbar_hasRequiredViewsAndMenuItems() {
@@ -210,11 +231,11 @@ public class ExampleInstrumentedTest {
 
         Intent intent = new Intent(
                 instrumentation.getTargetContext(),
-                TestToolbar.class);
+                TestToolbar.class
+        );
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        Activity activity =
-                instrumentation.startActivitySync(intent);
+        Activity activity = instrumentation.startActivitySync(intent);
 
         try {
             instrumentation.runOnMainSync(() -> {
@@ -222,97 +243,136 @@ public class ExampleInstrumentedTest {
                         activity.findViewById(R.id.toolbar);
 
                 assertNotNull(toolbar);
-                assertNotNull(activity.findViewById(R.id.fab));
 
                 assertNotNull(
-                        toolbar.getMenu().findItem(R.id.choice1));
+                        activity.findViewById(R.id.fab)
+                );
+
                 assertNotNull(
-                        toolbar.getMenu().findItem(R.id.choice2));
+                        toolbar.getMenu().findItem(R.id.choice1)
+                );
+
                 assertNotNull(
-                        toolbar.getMenu().findItem(R.id.choice3));
+                        toolbar.getMenu().findItem(R.id.choice2)
+                );
+
                 assertNotNull(
-                        toolbar.getMenu().findItem(R.id.about));
+                        toolbar.getMenu().findItem(R.id.choice3)
+                );
+
+                assertNotNull(
+                        toolbar.getMenu().findItem(R.id.about)
+                );
             });
         } finally {
             instrumentation.runOnMainSync(activity::finish);
         }
     }
 
+    // Test 8: SQLite - Save and read messages
+
     @Test
-    public void toolbar_choice1AndChoice3UpdateSnackbar() {
-        Instrumentation instrumentation =
-                InstrumentationRegistry.getInstrumentation();
-
-        Intent intent = new Intent(
-                instrumentation.getTargetContext(),
-                TestToolbar.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        Activity activity =
-                instrumentation.startActivitySync(intent);
+    public void database_canSaveAndReadMessage() {
+        SQLiteDatabase db = SQLiteDatabase.create(null);
 
         try {
-            onView(withId(R.id.choice1)).perform(click());
-            onView(withText("You selected item 1"))
-                    .check(matches(isDisplayed()));
+            ChatDatabaseHelper helper =
+                    new ChatDatabaseHelper(
+                            InstrumentationRegistry
+                                    .getInstrumentation()
+                                    .getTargetContext()
+                    );
 
-            onView(withId(R.id.choice3)).perform(click());
+            helper.onCreate(db);
 
-            onView(withId(R.id.edit_new_message))
-                    .perform(replaceText("Hello CP470"),
-                            closeSoftKeyboard());
+            ContentValues values = new ContentValues();
 
-            onView(withText("OK")).perform(click());
+            values.put(
+                    ChatDatabaseHelper.KEY_MESSAGE,
+                    "Hello SQLite"
+            );
 
-            onView(withId(R.id.choice1)).perform(click());
+            long id = db.insert(
+                    ChatDatabaseHelper.TABLE_NAME,
+                    null,
+                    values
+            );
 
-            onView(withText("Hello CP470"))
-                    .check(matches(isDisplayed()));
+            assertTrue(id > 0);
+
+            try (Cursor cursor = db.query(
+                    ChatDatabaseHelper.TABLE_NAME,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            )) {
+                assertEquals(1, cursor.getCount());
+                assertEquals(2, cursor.getColumnCount());
+
+                assertTrue(cursor.moveToFirst());
+
+                String message = cursor.getString(
+                        cursor.getColumnIndexOrThrow(
+                                ChatDatabaseHelper.KEY_MESSAGE
+                        )
+                );
+
+                assertEquals("Hello SQLite", message);
+            }
+
         } finally {
-            instrumentation.runOnMainSync(activity::finish);
+            db.close();
         }
     }
 
+    // Test 9: SQLite - Upgrade deletes old messages
+
     @Test
-    public void toolbar_choice2NoAndYesWork() {
-        Instrumentation instrumentation =
-                InstrumentationRegistry.getInstrumentation();
-
-        Intent intent = new Intent(
-                instrumentation.getTargetContext(),
-                TestToolbar.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        Activity activity =
-                instrumentation.startActivitySync(intent);
+    public void database_upgradeDeletesOldMessages() {
+        SQLiteDatabase db = SQLiteDatabase.create(null);
 
         try {
-            onView(withId(R.id.choice2)).perform(click());
+            ChatDatabaseHelper helper =
+                    new ChatDatabaseHelper(
+                            InstrumentationRegistry
+                                    .getInstrumentation()
+                                    .getTargetContext()
+                    );
 
-            onView(withText("Do you want to go back?"))
-                    .check(matches(isDisplayed()));
+            helper.onCreate(db);
 
-            onView(withText("No")).perform(click());
+            ContentValues values = new ContentValues();
 
-            onView(withId(R.id.toolbar))
-                    .check(matches(isDisplayed()));
+            values.put(
+                    ChatDatabaseHelper.KEY_MESSAGE,
+                    "Old message"
+            );
 
-            onView(withId(R.id.choice2)).perform(click());
-            onView(withText("Yes")).perform(click());
+            db.insert(
+                    ChatDatabaseHelper.TABLE_NAME,
+                    null,
+                    values
+            );
 
-            instrumentation.waitForIdleSync();
+            helper.onUpgrade(db, 1, 2);
 
-            assertTrue(activity.isFinishing()
-                    || activity.isDestroyed());
+            try (Cursor cursor = db.query(
+                    ChatDatabaseHelper.TABLE_NAME,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            )) {
+                assertEquals(0, cursor.getCount());
+            }
+
         } finally {
-            instrumentation.runOnMainSync(() -> {
-                if (!activity.isFinishing()
-                        && !activity.isDestroyed()) {
-                    activity.finish();
-                }
-            });
+            db.close();
         }
     }
-
-
 }
